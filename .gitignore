@@ -130,5 +130,6 @@ dmypy.json
 
 # own
 secretCredentials.yaml
-sqlit*
+sqlite_db
 resources/uploaded/*
+sqlite_db
