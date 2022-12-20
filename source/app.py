@@ -3,7 +3,7 @@ import os
 import sqlite3
 import yaml
 
-from flask import Flask, redirect, request, url_for
+from flask import Flask, redirect, request, url_for, render_template, flash
 from flask_login import (
     LoginManager,
     current_user,
@@ -13,6 +13,7 @@ from flask_login import (
 )
 from oauthlib.oauth2 import WebApplicationClient
 import requests
+from werkzeug.utils import secure_filename
 
 from db import init_db_command
 from user import User
@@ -26,6 +27,8 @@ GOOGLE_DISCOVERY_URL = (
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY") or os.urandom(24)
+app.config['UPLOAD_FOLDER'] = "./resources/uploaded/"
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 102
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -52,16 +55,9 @@ def load_user(user_id):
 @app.route("/")
 def index():
     if current_user.is_authenticated:
-        return (
-            "<p>Hello, {}! You're logged in! Email: {}</p>"
-            "<div><p>Google Profile Picture:</p>"
-            '<img src="{}" alt="Google profile pic"></img></div>'
-            '<a class="button" href="/logout">Logout</a>'.format(
-                current_user.name, current_user.email, current_user.profile_pic
-            )
-        )
+        return render_template('index.html', user = current_user)
     else:
-        return '<a class="button" href="/login">Google Login</a>'
+        return render_template('login.html')
 
 
 @app.route("/login")
@@ -146,6 +142,29 @@ def callback():
 def logout():
     logout_user()
     return redirect(url_for("index"))
+
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+
+def allowed_file(filename):
+	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/upload', methods=['POST'])
+def upload_image():
+	if 'file' not in request.files:
+		flash('No file part')
+		return redirect(url_for("index"))
+	file = request.files['file']
+	if file.filename == '':
+		flash('No image selected for uploading')
+		return redirect(url_for("index"))
+	if file and allowed_file(file.filename):
+		filename = secure_filename(file.filename)
+		file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+		print('upload_image filename: ' + filename)
+		return render_template('verify.html')
+	else:
+		flash('Allowed image types are -> png, jpg, jpeg, gif')
+		return redirect(url_for("index"))
 
 
 def get_google_provider_cfg():

@@ -1,0 +1,21 @@
+<html>
+    <head>
+    </head>
+    <body>
+        <p>Hello, {{user.name}}! You're logged in! Email: {{user.email}}</p>
+        <div><p>Google Profile Picture:</p>
+        <img src="{{user.profile_pic}}"></img></div>
+        <br>
+            {% for mesg in get_flashed_messages() %}
+            <h1>{{ mesg }}</h1>
+            {% endfor %}
+        <br>
+        <form action = "/upload" method = "POST" enctype = "multipart/form-data">
+            <input type = "file" name = "file" />
+            <input type = "submit"/>
+         </form>   
+        <br>
+        <br>
+        <h1><a class="button" href="/logout">Logout</a></h1>
+    </body>
+</html>
