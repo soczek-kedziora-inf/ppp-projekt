@@ -5,9 +5,11 @@ CREATE TABLE user (
   profile_pic TEXT NOT NULL
 );
 -- Można jeszcze jakas ta tabele nizej zmienic nwm
-CREATE TABLE result (
-  id TEXT PRIMARY KEY,
+-- tu dałem inta primary key, żeby go autoinkrementować
+CREATE TABLE results (
+  id INTEGER PRIMARY KEY ,
   createdOn DATE NOT NULL,
+  originalFilename TEXT NOT NULL,
   classifiedAs TEXT NOT NULL,
   correct BOOLEAN ,
   userId TEXT NOT NULL,

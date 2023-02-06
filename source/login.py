@@ -12,13 +12,13 @@ from user import User
 
 app_login = Blueprint('login',__name__)
 
-credentials = yaml.load(open('resources/secretCredentials.yaml'))
+credentials = yaml.load(open('../resources/secretCredentials.yaml'))
 GOOGLE_CLIENT_ID =  credentials['clientId']
 GOOGLE_CLIENT_SECRET =  credentials['clientSecret']
 GOOGLE_DISCOVERY_URL = (
     "https://accounts.google.com/.well-known/openid-configuration"
 )
-
+print(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET)
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
 @app_login.route("/login")

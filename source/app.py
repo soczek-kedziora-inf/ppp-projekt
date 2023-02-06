@@ -1,6 +1,6 @@
 import os
 import sqlite3
-
+from model import getModel
 
 from flask import Flask, render_template 
 from flask_login import (
@@ -13,14 +13,16 @@ from db import init_db_command
 from user import User
 from classify import app_classify
 from login import app_login
+from model import getModel
 
 app = Flask(__name__)
 app.register_blueprint(app_classify)
 app.register_blueprint(app_login)
 app.secret_key = os.environ.get("SECRET_KEY") or os.urandom(24)
-app.config['UPLOAD_FOLDER'] = "./resources/uploaded/"
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 102
-
+app.config['UPLOAD_FOLDER'] = "../resources/uploaded/"
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+app.static_folder = '../static'
+getModel()
 login_manager = LoginManager()
 login_manager.init_app(app)
 

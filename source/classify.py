@@ -1,8 +1,15 @@
+import cv2
 from flask import Blueprint,current_app, render_template, url_for, request,redirect, flash
 from werkzeug.utils import secure_filename
 import os
+from image import Image
+from flask import session
+from db import get_db
+import datetime
+from flask_login import current_user
 
 app_classify = Blueprint('classify',__name__)
+
 @app_classify.route('/upload', methods=['POST'])
 def upload_image():
 	if 'file' not in request.files:
@@ -14,11 +21,25 @@ def upload_image():
 		return redirect(url_for("index"))
 	if file and allowed_file(file.filename):
 		filename = secure_filename(file.filename)
-        #tutaj funkcja która dokona tej klasyfikacji i zapisze rekord do bazy danych (plus wezmie id i zapisze plik z nazwa = id)
-		file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
-		print('upload_image filename: ' + filename)
-        #tutaj formatka opisana już szczegolowo w html i potem instert z odpowiedzią do bazy danych 
-		return render_template('verify.html')
+
+		image = Image(file)
+		prediction = image.classify()
+
+		# using session to make filename and prediction available for db insert
+		session['org_filename'] = filename
+		session['prediction'] = prediction
+
+		# preparing image to be displayed in web view
+		uri = image.prepare_to_display()
+		image.get_filename()
+
+		# save the image locally on the server, if UPLOAD_FOLDER does not exist - create it
+		os.makedirs(current_app.config['UPLOAD_FOLDER'], exist_ok=True)
+		image.save(current_app.config['UPLOAD_FOLDER'])
+
+		print('Uploaded image new filename: ' + image.get_filename())
+
+		return render_template('verify.html', prediction=prediction, bytesImage=uri)
 	else:
 		flash('Allowed image types are -> png, jpg, jpeg')
 		return redirect(url_for("index"))
@@ -27,4 +48,31 @@ ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app_classify.route('/verify', methods=['POST'])
+def verify():
+	print(request.method)
+	if request.method == 'POST':
+		if request.form.get('yes') == 'yes':
+			session['correct'] = True
+			print("True")
+		elif request.form.get('no') == 'no':
+			session['correct'] = False
+			print("false")
+		else:
+			pass # Unknown
+	elif request.method == 'GET':
+		print("No Post Back Call")
+	insert_to_db()
+	return redirect(url_for("index"))
+
+def insert_to_db():
+	db = get_db()
+	db.execute(
+		"INSERT INTO results (createdOn, originalFilename, classifiedAs, correct, userId)"
+		" VALUES (?, ?, ?, ?, ?)",
+		(datetime.datetime.now(), session['org_filename'], session['prediction'], session['correct'], current_user.id)
+	)
+	db.commit()
+	return redirect(url_for("index"))
 

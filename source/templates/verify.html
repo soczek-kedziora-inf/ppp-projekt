@@ -2,8 +2,18 @@
     <head>
     </head>
     <body>
-        <p>This image is PLACEHOLDER</p>
-        <p> tutaj obrazek</p>
-        <p>czy poprawnie sklasyfikowano?   tutaj dwa przyciski, potem zapis wyniku do bazy i powrót na strone główną</p>
+        <p>Your image</p>
+        <p><img src="{{ bytesImage }}" ></p>
+        <p>Classified as: {{ prediction }}</p>
+        <p> Was the classification correct?</p>
+        <form action="/verify" method = "POST">
+            <input type = "submit" name = "yes" value= "yes"/>
+            <input type = "submit" name = "no" value= "no"/>
+        </form>
+<!--        <p>czy poprawnie sklasyfikowano?   tutaj dwa przyciski, potem zapis wyniku do bazy i powrót na strone główną</p>-->
+<!--        <form action = "/upload" method = "POST" enctype = "multipart/form-data">-->
+<!--            <input type = "file" name = "file" />-->
+<!--            <input type = "submit"/>-->
+<!--         </form>-->
     </body>
 </html>
