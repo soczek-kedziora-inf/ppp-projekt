@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <link rel="shortcut icon" href="#" />
+        <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='stylesheets/styles.css') }}"/>
+    </head>
+    <body>
+        <h1>
+            Your previous classfications:
+        </h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Created on</th>
+                    <th>Filename</th>
+                    <th>Classified as</th>
+                    <th>Correct</th>
+                    <th>user ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in res %}
+                <tr>
+                    <td>{{ r[0] }}</td>
+                    <td>{{ r[1] }}</td>
+                    <td>{{ r[2] }}</td>
+                    <td>{{ r[3] }}</td>
+                    <td>{{ r[4] }}</td>
+                    <td>{{ r[5] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+         <form action="/ret" method = "POST">
+            <input type = "submit" name = "ret" value= "Main page"/>
+        </form>
+    </body>
+</html>

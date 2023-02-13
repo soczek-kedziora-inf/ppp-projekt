@@ -133,4 +133,5 @@ secretCredentials.yaml
 sqlite_db
 resources/uploaded/*
 sqlite_db
-/static/stylesheets/styles.css
+sqlite_db.db
+/static/stylesheets/test.css

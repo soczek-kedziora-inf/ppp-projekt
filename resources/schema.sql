@@ -8,7 +8,7 @@ CREATE TABLE user (
 -- tu dałem inta primary key, żeby go autoinkrementować
 CREATE TABLE results (
   id INTEGER PRIMARY KEY ,
-  createdOn DATE NOT NULL,
+  createdOn DATETIME NOT NULL,
   originalFilename TEXT NOT NULL,
   classifiedAs TEXT NOT NULL,
   correct BOOLEAN ,

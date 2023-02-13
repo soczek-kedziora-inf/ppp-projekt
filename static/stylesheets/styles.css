@@ -62,3 +62,15 @@ input[type="submit"]:hover {
   transform: translateY(-3px);
   box-shadow: 0px 5px 7px rgba(0, 0, 0, 0.2);
 }
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+th {
+    background-color: #c3ffb3;
+}

@@ -13,11 +13,13 @@ from db import init_db_command
 from user import User
 from classify import app_classify
 from login import app_login
+from stats import app_stats
 from model import getModel
 
 app = Flask(__name__)
 app.register_blueprint(app_classify)
 app.register_blueprint(app_login)
+app.register_blueprint(app_stats)
 app.secret_key = os.environ.get("SECRET_KEY") or os.urandom(24)
 app.config['UPLOAD_FOLDER'] = "../resources/uploaded/"
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
